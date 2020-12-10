@@ -7,5 +7,4 @@ The entire thing is coded in java
 
 As for comments in the code, yes
 
-<img style="margin-left: 5vw" src="docs/modCheck.gif" />
-<font size="1">where<sup>?</sup></font>
+![alt text](docs/modCheck.gif "Where?") ?<sup>where</sup>
