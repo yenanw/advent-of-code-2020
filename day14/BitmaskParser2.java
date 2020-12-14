@@ -23,7 +23,7 @@ class BitmaskParser2 {
     public long[] mask(long index) {
         if (mask.isBlank())
             return new long[]{index};
-        Long.parseLong("1");
+        
         StringBuilder sb = new StringBuilder(Long.toBinaryString(index));
 
         // creates a 36 bit string from the index

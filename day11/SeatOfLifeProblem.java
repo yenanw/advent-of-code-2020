@@ -36,7 +36,7 @@ class SeatOfLifeProblem {
                 }
             }
 
-            if (isSame(cSeats)) {k
+            if (isSame(cSeats)) {
                 scanner.close();
                 break;
             }
