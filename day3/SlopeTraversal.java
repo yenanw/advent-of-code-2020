@@ -27,6 +27,7 @@ public class SlopeTraversal {
      * Traverse the map from (0,0) to the last row and count the amount of
      * times it encountered the number n
      * 
+     * @param n The number to be checked for encounter
      * @return The number of times n appears on the slope
      */
     public int traverseToBottom(int n) {
