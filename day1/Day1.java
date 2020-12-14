@@ -20,10 +20,9 @@ public class Day1 {
             System.out.println("The three numbers that sum to 2020 is: " +
                                 triple[0] + ", " + triple[1] + " and " + triple[2]);
             System.out.println("The product is " + triple[0]*triple[1]*triple[2]);
-            
+
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
-    
 }

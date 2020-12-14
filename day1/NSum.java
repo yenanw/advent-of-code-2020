@@ -6,7 +6,6 @@
  * @see also     Day1
  */
 public class NSum {
-
      /**
       * A brute-force algorithm for finding the first pair in the array which
       * sums to a given number
