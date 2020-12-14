@@ -16,7 +16,6 @@ public class Day3 {
     public static void main(String args[]) {
         try {
             String input = args[0];
-
             int[][] map = Files.lines(Paths.get(input))
                           .map(line->parseLine(line))
                           .toArray(int[][]::new);   
