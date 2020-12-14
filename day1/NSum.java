@@ -6,16 +6,16 @@
  * @see also     Day1
  */
 public class NSum {
-     /**
-      * A brute-force algorithm for finding the first pair in the array which
-      * sums to a given number
-      *
-      * @param input The int array to search through
-      * @param sum   The number being tested
-      * @return An empty array if no pairs can be found, else an int array that
-      *         consists of the 2 integers that sums to the given numbers
-      */
-     static public int[] findPair(int input[], int sum) {
+	/**
+	  * A brute-force algorithm for finding the first pair in the array which
+	  * sums to a given number
+	  *
+	  * @param input The int array to search through
+	  * @param sum   The number being tested
+	  * @return An empty array if no pairs can be found, else an int array that
+	  *         consists of the 2 integers that sums to the given numbers
+	  */
+    public static int[] findPair(int input[], int sum) {
         for (int i = 0; i < input.length; i++) {
             for (int j = i + 1; j < input.length; j++) {
                 if (input[i] + input[j] == sum) {
@@ -25,7 +25,6 @@ public class NSum {
                 }
             }
         }
-
         return new int[0];
     }
 
@@ -38,7 +37,7 @@ public class NSum {
       * @return An empty array if no triples can be found, else an int array
       *         that consists of the 3 integers that sums to the given numbers
       */
-    static public int[] findTriple(int input[], int sum) {
+    public static int[] findTriple(int input[], int sum) {
         for (int i = 0; i < input.length; i++) {
             for (int j = i + 1; j < input.length; j++) {
                 for (int o = j + 1; o < input.length; o++) {
@@ -50,7 +49,6 @@ public class NSum {
                 }
             }
         }
-
         return new int[0];
     }
 
