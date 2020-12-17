@@ -2,67 +2,84 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 
+/**
+ * A class representing whatever thing the day17 challenge specifies, it's
+ * far from the most efficient implementation, but as least it's elegant and
+ * works within the acceptable time frame
+ * 
+ * good luck trying this on any dimension higher than 4 though
+ * 
+ * frankly this challenge probably runs the fastest with hard-coded dimensions,
+ * a.k.a. 3 or 4 nested loops
+ *
+ * @author       yenanw
+ * @version      1.0
+ * @see also     Day17, Coord
+ */
 public class InfiniteCube {
     private Set<Coord> activeCoords = new HashSet<>();
-    private int lowerX = 0, higherX = 0;
-    private int lowerY = 0, higherY = 0;
-    private int lowerZ = 0, higherZ = 0;
-    private int lowerW = 0, higherW = 0;
+    private int dimen;
+    private int[] lower;
+    private int[] higher;
     
-    public InfiniteCube(Collection<Coord> initCoords) {
+    /**
+     * Constructs an infinite cube according to the day17 challenge given a
+     * set of start coordinates and a dimension
+     * 
+     * @param initCoords The coordinates of the active cubes from the start
+     * @param dimensions The dimens to execute the cycles in
+     */
+    public InfiniteCube(Collection<Coord> initCoords, int dimensions) {
         activeCoords.addAll(initCoords);
+        dimen = dimensions;
+        higher = new int[dimen];
+        lower = new int[dimen];
         shrink();
     }
 
-    public void cycle() {
-        Set<Coord> modifiedCoord = new HashSet<>(activeCoords);
-        for (int x = lowerX-1; x <= higherX+1; x++) {
-            for (int y = lowerY-1; y <= higherY+1; y++) {
-                for (int z = lowerZ-1; z <= higherZ+1; z++) {
-                    for (int w = lowerW-1; w <= higherW+1; w++) {
-                        Coord coord = new Coord(x, y, z, w);
-                        int neighbors = countActiveNeighbors(coord);
-                        if (activeCoords.contains(coord)) {
-                            if (neighbors != 2 && neighbors != 3)
-                                modifiedCoord.remove(coord);
-                        } else {
-                            if (neighbors == 3) 
-                                modifiedCoord.add(coord);
-                        }
-                    }
-                }
-            }   
+    /**
+     * Does a specified amount of cycles with the cube
+     * 
+     * @param repeat The amount of times to repeat to cycle
+     */
+    public void cycle(int repeat) {
+        for (int i = 0; i < repeat; i++) {
+            Set<Coord> modifiedCoord = new HashSet<>(activeCoords);
+
+            cycle(0, new int[dimen], modifiedCoord);
+
+            activeCoords = modifiedCoord;
+            shrink();
         }
-
-        activeCoords = modifiedCoord;
-        shrink();
     }
 
-    public int size() {
+    /**
+     * Counts the size of all active coords
+     * 
+     * @return The size of all active coords
+     */
+    public int countActiveCubes() {
         return activeCoords.size();
     }
     
+    /**
+     * Finds all neighboring cubes of the specified coordinate
+     * 
+     * @param coord The coordinate to get neighbors from
+     * @return A set of all neighbors of the specified coordinate
+     */
     public Set<Coord> getNeighbors(Coord coord) {
-        int x = coord.getX();
-        int y = coord.getY();
-        int z = coord.getZ();
-        int w = coord.getW();
-
-        Set<Coord> neighbors = new HashSet<>();
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    for (int dw = -1; dw <= 1; dw++) {
-                        Coord n = new Coord(x+dx, y+dy, z+dz, w+dw);
-                        if (dx != 0 || dy != 0 || dz != 0 || dw != 0)
-                            neighbors.add(n);
-                    }
-                }
-            }   
-        }
+        Set<Coord> neighbors = getNeighbors(coord, 0, new HashSet<>());
+        neighbors.remove(coord);
         return neighbors;
     }
 
+    /**
+     * Counts the amount of active neighbors the specified coord has
+     * 
+     * @param coord The coordinate to get neighbors from
+     * @return The amount of active neighbors the specified coord has
+     */
     public int countActiveNeighbors(Coord coord) {
         int count = 0;
         for (Coord c : getNeighbors(coord)) {
@@ -72,31 +89,65 @@ public class InfiniteCube {
         return count;
     }
 
+    private void cycle(int index, int[] current, Set<Coord> modified) {
+        if (index >= dimen)
+            return;
+
+        for (int i = lower[index]-1; i <= higher[index]+1; i++) {
+            current[index] = i;
+            // not sure about the exact complexity of this recursion, but
+            // presumably factorial growth lmao
+            cycle(index+1, current, modified); 
+
+            // if we are at the end of the recursion
+            if (index == dimen-1) {
+                Coord coord = new Coord(current);
+                int neighborCount = countActiveNeighbors(coord);
+
+                // specifications for activate/inacticate the cubes
+                if (activeCoords.contains(coord)) {
+                    if (neighborCount != 2 && neighborCount != 3)
+                        modified.remove(coord);
+                } else {
+                    if (neighborCount == 3) 
+                        modified.add(coord);
+                }
+            }
+        }
+    }
+
+    private Set<Coord> getNeighbors(Coord coord,
+                                    int index,
+                                    Set<Coord> neighbors) {
+        // O(3^n) exponential growth for this recursion
+        if (index < coord.length()) {
+            int[] coords = coord.getCoords();
+
+            coords[index] = coord.get(index) - 1;
+            neighbors.addAll(
+                      getNeighbors(new Coord(coords), index+1, neighbors));
+
+            neighbors.addAll(
+                      getNeighbors(coord, index+1, neighbors));
+
+            coords[index] = coord.get(index) + 1;
+            neighbors.addAll(
+                      getNeighbors(new Coord(coords), index+1,neighbors));
+        } else {
+            neighbors.add(coord);
+        }
+        return neighbors;
+    }
+
     private void shrink() {
         for (Coord coord : activeCoords) {
-            int x = coord.getX();
-            if (x > higherX)
-                higherX = x;
-            else if (x < lowerX)
-                lowerX = x;
-    
-            int y = coord.getY();
-            if (y > higherY)
-                higherY = y;
-            else if (y < lowerY)
-                lowerY = y;
-    
-            int z = coord.getZ();
-            if (z > higherZ)
-                higherZ = z;
-            else if (z < lowerZ)
-                lowerZ = z;
-
-            int w = coord.getW();
-            if (w > higherW)
-                higherW = w;
-            else if (w < lowerW)
-                lowerW = w;
+           int[] coords = coord.getCoords();
+           for (int i = 0; i < coords.length; i++) {
+                if (coords[i] > higher[i])
+                    higher[i] = coords[i];
+                else if (coords[i] < lower[i])
+                    lower[i] = coords[i];
+           }
         }
     }
 }

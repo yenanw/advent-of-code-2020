@@ -4,14 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Day17 {
-    private static final String Set = null;
-
-    public static List<Coord> parseCoords(String[] input) {
+    public static List<Coord> parseCoords(String[] input, int dimen) {
         List<Coord> activeCoords = new ArrayList<>();
         for (int y = 0; y < input.length; y++) {
             for (int x = 0; x < input[0].length(); x++) {
                 if (input[y].charAt(x) == '#') {
-                    Coord coord = new Coord(x, y, 0, 0);
+                    List<Integer> coords = new ArrayList<>();
+                    coords.add(x);
+                    coords.add(y);
+                    // dynamically increase the dimensions
+                    for (int i = 2; i < dimen; i++)
+                        coords.add(0);
+                        
+                    Coord coord = new Coord(coords.stream()
+                                            .mapToInt(i->i)
+                                            .toArray());
                     activeCoords.add(coord);
                 }
             }
@@ -25,14 +32,17 @@ public class Day17 {
             String[] lines = Files.lines(Paths.get(fileName))
                              .toArray(String[]::new);
 
-            InfiniteCube ic = new InfiniteCube(parseCoords(lines));
+            //----------------PART 1----------------                 
+            InfiniteCube ic = new InfiniteCube(parseCoords(lines, 3), 3);
+            ic.cycle(6);
+            System.out.println("There are " + ic.countActiveCubes() +
+                               " active cubes after the sixth cycle for 3D cubes");
 
-            for (int i = 0; i < 6; i++) {
-                ic.cycle();
-            }
-            // lmao this is some ugly ass code
-            System.out.println(ic.size());
-
+             //----------------PART 2---------------- 
+            ic = new InfiniteCube(parseCoords(lines, 4), 4);
+            ic.cycle(6);
+            System.out.println("There are " + ic.countActiveCubes() +
+                               " active cubes after the sixth cycle for 4D cubes");
         } catch (Exception e) {
             e.printStackTrace();
         }
