@@ -1,31 +1,51 @@
+import java.util.Arrays;
+
+/**
+ * A class representing a coordinate with any dimension
+ *
+ * @author       yenanw
+ * @version      1.0
+ * @see also     Day17, InfiniteCube
+ */
 public class Coord {
-    private final int x;
-    private final int y;
-    private final int z;
-    private final int w;
+    private final int[] coords;
     private Integer hashCode;
 
-    public Coord(int x, int y, int z, int w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+    /**
+     * Constructs a Coord object with the specified coordinates
+     * 
+     * @param coords The coordinates to be copied from
+     */
+    public Coord(int[] coords) {
+        this.coords = Arrays.copyOf(coords, coords.length);
     }
 
-    public int getX() {
-        return x;
+    /**
+     * Returns the coordinates
+     * 
+     * @return The copy of coordinates
+     */
+    public int[] getCoords() {
+        return Arrays.copyOf(coords, coords.length);
     }
 
-    public int getY() {
-        return y;
+    /**
+     * Returns the value from the coordinates on the specified axis
+     * 
+     * @param index The axis/index in the coordinate system
+     * @return The value in that axis
+     */
+    public int get(int index) {
+        return coords[index];
     }
 
-    public int getZ() {
-        return z;
-    }
-
-    public int getW() {
-        return w;
+    /**
+     * Returns the amount of dimensions
+     * 
+     * @return The length of the coordinate system
+     */
+    public int length() {
+        return coords.length;
     }
     
     @Override
@@ -34,40 +54,30 @@ public class Coord {
             return false;
 
         Coord coord = (Coord)obj;
-        return this.x == coord.x &&
-               this.y == coord.y &&
-               this.z == coord.z &&
-               this.w == coord.w;
-    }
-
-    @Override
-    public String toString() {
-        return new StringBuilder().append("[x=").append(x)
-                                  .append(", y=").append(y)
-                                  .append(", z=").append(z)
-                                  .append("]").toString();
+        if (this.length() != coord.length())
+            return false;
+        // two Coords are the same if they have the same coordinates
+        for (int i = 0; i < length(); i++) {
+            if (get(i) != coord.get(i))
+                return false;
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
+        // to work with HashSet, the hashCode() must be implemented,
+        // initially i tried with TreeSet and that was a disaster, use HashSet
+        // whenever possible
         if (hashCode == null) {
-            int nx = x;
-            if (nx == 0)
-                nx = 1;
-
-            int ny = y;
-            if (ny == 0)
-                ny = 1;
-
-            int nz = z;
-            if (nz == 0)
-                nz = 1;
-
-            int nw = w;
-            if (nw == 0)
-                nw = 1;
-
-            hashCode = 73 * nx * ny * nz * nw;
+            int prod = 1;
+            for (int i = 0; i < length(); i++) {
+                if (get(i) == 0)
+                    continue;
+                else
+                    prod *= get(i);
+            }
+            hashCode = 37 * prod;
         }
         return hashCode;
     }
