@@ -12,7 +12,7 @@ import java.util.Stack;
  *
  * @author       yenanw
  * @version      1.0
- * @see also     Day18
+ * @see also     Day18, Token
  */
 public class Calculator {
     private Map<String,Integer> operators = new HashMap<>();
