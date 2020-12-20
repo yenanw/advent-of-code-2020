@@ -15,8 +15,8 @@ public class Tile {
     private List<int[][]> arrangements;
 
     public Tile(int[][] tile, int id) {
-        arrangements = initArrangements(tile);
         this.tile = tile;
+        arrangements = initArrangements(copy(tile));
         defaultTile = copy(tile);
         this.id = id;
     }
@@ -35,6 +35,16 @@ public class Tile {
 
     public List<int[][]> getArrangements() {
         return arrangements;
+    }
+
+    public int[][] stripBorder() {
+        int[][] stripped = new int[tile.length-2][tile[0].length-2];
+        for (int i = 1; i < tile.length-1; i++) {
+            for (int j = 1; j < tile.length-1; j++) {
+                stripped[i-1][j-1] = tile[i][j];
+            }   
+        }
+        return stripped;
     }
    
     public boolean matchBottom(Tile t) {
@@ -91,6 +101,20 @@ public class Tile {
                left == null && right == null;
     }
 
+    public boolean isEdge() {
+        int count = 0;
+        if (top != null)
+            count++;
+        if (bottom != null)
+            count++;
+        if (left != null)
+            count++;
+        if (right != null)
+            count++;
+
+        return count == 3;
+    }
+
     public boolean isCorner() {
         int count = 0;
         if (top != null)
@@ -106,16 +130,38 @@ public class Tile {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Tile))
+            return false;
+            
+        return this.getID() == ((Tile)obj).getID();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        for (int i = 0; i < tile.length; i++) {
+            for (int j = 0; j < tile[0].length; j++) {
+                hash += defaultTile[i][j];
+            }
+        }
+        
+        return hash*37;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Tile: ").append(id).append("\n");
-        for (int[][] t : arrangements) {
-            for (int[] row : t) {
-                sb.append(readRow(row)).append("\n");
+        sb.append("Tile ID: ").append(id).append("\n");
+        for (int[] row : tile) {
+            for (int v : row) {
+                if (v <= 0)
+                    sb.append('.');
+                else
+                    sb.append('#');
             }
             sb.append("\n");
         }
-        sb.append("End of tile ").append(id).append("\n");
         return sb.toString();
     }
 
