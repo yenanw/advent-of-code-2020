@@ -32,25 +32,56 @@ public class Day20 {
         return tiles.toArray(Tile[]::new);
     }
 
+    public static int[][] parsePattern(String[] pattern) {
+        List<int[]> matrix = new ArrayList<>();
+        for (String line : pattern) {
+            int[] row = new int[line.length()];
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) == '#')
+                    row[i] = 1;
+            }
+            matrix.add(row);
+        }
+        return matrix.toArray(int[][]::new);
+    }
+
     public static void main(String[] args) {
         try {
             String fileName = args[0];
             String[] lines = Files.lines(Paths.get(fileName))
                              .toArray(String[]::new);
 
-           TileManager tm = new TileManager(parseTiles(lines));
-           tm.arrange();
+            TileManager tm = new TileManager(parseTiles(lines));
 
-           //----------------PART 1----------------
-           Tile[] corners = tm.findCorners();
-           long prod = 1;
-           for (Tile cornerTile : corners) {
-               prod *= cornerTile.getID();
-           }
-           System.out.println("The product of the corners is " + prod);
-           
-           //----------------PART 2----------------
-           // wtf
+            //----------------PART 1----------------
+            Tile[] corners = tm.findCorners();
+            long prod = 1;
+            for (Tile cornerTile : corners) {
+                prod *= cornerTile.getID();
+            }
+            System.out.println("The product of the corners is " + prod);
+            
+            //----------------PART 2----------------
+            tm.arrange();
+            Tile image = tm.concatTiles();
+            int[][] imageTile = image.getTile();
+            int count = 0;
+            for (int i = 0; i < imageTile.length; i++) {
+                for (int j = 0; j < imageTile[0].length; j++) {
+                    if (imageTile[i][j] > 0)
+                        count++;
+                }
+            }
+
+            String[] pattern = {"                  # ", // fucking sea monster
+                                "#    ##    ##    ###",
+                                " #  #  #  #  #  #   "};
+
+            int seaMonsters = tm.countMatchingPattern(image,
+                                                      parsePattern(pattern));
+            count -= seaMonsters * 15; // because 15 hashtags in the pattern
+            System.out.println("The water roughness is " + count);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
