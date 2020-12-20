@@ -1,19 +1,37 @@
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * A class representing an image tile described in the day20 challenge, it
+ * functions sort of like a linked list but with 4 directions
+ *
+ * @author       yenanw
+ * @version      1.0
+ * @see also     Day20, TileManager
+ */
 public class Tile {
+    // ugly public fields for easier access for my sake
     public Tile top = null;
     public Tile bottom = null;
     public Tile left = null;
     public Tile right = null;
-
+    // to make sure we can always reset a tile
     private int[][] defaultTile;
-
+    // the current tile
     private int[][] tile;
     private int id;
-
+    // all of the possible arrangements of a tile, meaning all the combinations
+    // of the rotations and vertical/horizontal flips, excluding duplicates
     private List<int[][]> arrangements;
 
+    /**
+     * Constructs a tile by computing all possible arrangements of the specified
+     * tile and ID
+     * 
+     * @param tile The image tile
+     * @param id   The ID of the image tile
+     */
     public Tile(int[][] tile, int id) {
         this.tile = tile;
         arrangements = initArrangements(copy(tile));
@@ -21,22 +39,46 @@ public class Tile {
         this.id = id;
     }
 
+    /**
+     * @return The ID of the image tile
+     */
     public int getID() {
         return id;
     }
 
+    /**
+     * Sets the current tile as the specified int matrix
+     * 
+     * @param tile The speified tile to be set
+     */
     public void setTile(int[][] tile) {
         this.tile = tile;
     }
 
+    /**
+     * Unsafe getter for the tile int matrix
+     * 
+     * @return The int matrix representing the tile
+     */
     public int[][] getTile() {
         return tile;
     }
 
+    /**
+     * Unsafe getter for the all arrangments of this tile
+     * 
+     * @return The list containing all possible arrangments of the tile
+     */
     public List<int[][]> getArrangements() {
         return arrangements;
     }
 
+    /**
+     * Safe getter, since it copies, for the tile but with all its border
+     * stripped off
+     * 
+     * @return An int matrix with size (tile.length-2)*(tile[0].length-2)
+     */
     public int[][] stripBorder() {
         int[][] stripped = new int[tile.length-2][tile[0].length-2];
         for (int i = 1; i < tile.length-1; i++) {
@@ -47,6 +89,14 @@ public class Tile {
         return stripped;
     }
    
+    /**
+     * Checks if the bottom row of this tile matches the top row of the
+     * specified tile
+     * 
+     * @param t The specified tile to be checked
+     * @return true if top of the specified tile matches the bottom of this
+     *         tile, else false
+     */
     public boolean matchBottom(Tile t) {
         int[][] tM = t.getTile();
         for (int i = 0; i < tile[0].length; i++) {
@@ -56,6 +106,14 @@ public class Tile {
         return true;
     }
 
+    /**
+     * Checks if the top row of this tile matches the bottom row of the
+     * specified tile
+     * 
+     * @param t The specified tile to be checked
+     * @return true if bottom of the specified tile matches the top of this
+     *         tile, else false
+     */
     public boolean matchTop(Tile t) {
         int[][] tM = t.getTile();
         for (int i = 0; i < tile[0].length; i++) {
@@ -65,6 +123,14 @@ public class Tile {
         return true;
     }
 
+    /**
+     * Checks if the left column of this tile matches the right column of the
+     * specified tile
+     * 
+     * @param t The specified tile to be checked
+     * @return true if right of the specified tile matches the left of this
+     *         tile, else false
+     */
     public boolean matchLeft(Tile t) {
         int[][] tM = t.getTile();
         for (int i = 0; i < tile.length; i++) {
@@ -74,6 +140,14 @@ public class Tile {
         return true;
     }
 
+    /**
+     * Checks if the right column of this tile matches the left column of the
+     * specified tile
+     * 
+     * @param t The specified tile to be checked
+     * @return true if left of the specified tile matches the right of this
+     *         tile, else false
+     */
     public boolean matchRight(Tile t) {
         int[][] tM = t.getTile();
         for (int i = 0; i < tile.length; i++) {
@@ -83,6 +157,9 @@ public class Tile {
         return true;
     }
 
+    /**
+     * Resets the whole tile to the initial state
+     */
     public void reset() {
         top = null;
         bottom = null;
@@ -91,42 +168,45 @@ public class Tile {
         tile = copy(defaultTile);
     }
 
-    public boolean isReady() {
-        return top != null && bottom != null &&
-               left != null && right != null;
-    }
-
+    /**
+     * Checks if the tile is free to arrange, meaning the tile is not connected
+     * to any sides yet
+     * 
+     * @return true if all sides are null, else false
+     */
     public boolean isFree() {
-        return top == null && bottom == null &&
-               left == null && right == null;
+        return countNonNullSides() == 0;
     }
 
+    /**
+     * Checks if the tile completely done, meaning all 4 sides of the tile is 
+     * connected to something
+     * 
+     * @return true if all sides are non-null, else false
+     */
+    public boolean isReady() {
+        return countNonNullSides() == 4;
+    }
+
+    /**
+     * Checks if the tile is an edge, meaning only 3 sides of the tile is
+     * connected
+     * 
+     * @return true if only 3 sides are non-null, else false
+     */
     public boolean isEdge() {
-        int count = 0;
-        if (top != null)
-            count++;
-        if (bottom != null)
-            count++;
-        if (left != null)
-            count++;
-        if (right != null)
-            count++;
-
-        return count == 3;
+        return countNonNullSides() == 3;
     }
 
+    /**
+     * Checks if the tile is a corner, meaning only 2 sides of the tile is
+     * connected, it will give false positives as it will return true when
+     * for instance, only the top and bottom are connected
+     * 
+     * @return true if only 2 sides are non-null, else false
+     */
     public boolean isCorner() {
-        int count = 0;
-        if (top != null)
-            count++;
-        if (bottom != null)
-            count++;
-        if (left != null)
-            count++;
-        if (right != null)
-            count++;
-
-        return count == 2;
+        return countNonNullSides() == 2;
     }
 
     @Override
@@ -145,7 +225,6 @@ public class Tile {
                 hash += defaultTile[i][j];
             }
         }
-        
         return hash*37;
     }
 
@@ -163,6 +242,20 @@ public class Tile {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    private int countNonNullSides() {
+        int count = 0;
+        if (top != null)
+            count++;
+        if (bottom != null)
+            count++;
+        if (left != null)
+            count++;
+        if (right != null)
+            count++;
+
+        return count;
     }
 
     private List<int[][]> initArrangements(int[][] tile) {
@@ -190,18 +283,9 @@ public class Tile {
         return arr;
     }
 
-    private String readRow(int[] row) {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < row.length; i++) {
-            if (row[i] <= 0)
-                sb.append('.');
-            else
-                sb.append('#');
-        }
-        return sb.toString();
-    }
-
     //----------------------------Auxiliary methods-----------------------------
+    // the methods below have nothing to do with the Tile class, they are here
+    // because i need them, I'm sorry Robert-sama for violating the principles
     private int[][] copy(int[][] m) {
         int[][] copy = new int[m.length][m[0].length];
         for (int i = 0; i < m.length; i++) {

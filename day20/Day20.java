@@ -66,12 +66,11 @@ public class Day20 {
             Tile image = tm.concatTiles();
             int[][] imageTile = image.getTile();
             int count = 0;
-            for (int i = 0; i < imageTile.length; i++) {
-                for (int j = 0; j < imageTile[0].length; j++) {
+            // count the total hashtags in the image
+            for (int i = 0; i < imageTile.length; i++)
+                for (int j = 0; j < imageTile[0].length; j++)
                     if (imageTile[i][j] > 0)
                         count++;
-                }
-            }
 
             String[] pattern = {"                  # ", // fucking sea monster
                                 "#    ##    ##    ###",
