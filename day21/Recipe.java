@@ -1,19 +1,38 @@
 import java.util.Set;
 
+/**
+ * A data container for the input from the day21 challenge
+ *
+ * @author       yenanw
+ * @version      1.0
+ * @see also     Day21, FoodHandler
+ */
 public class Recipe {
     private Set<String> ingredients;
     private Set<String> allergens;
     private Integer hashCode;
 
+    /**
+     * Construcs the recipe class by taking in two sets of data
+     * 
+     * @param ingredients The ingredients of this recipe
+     * @param allergens   The allergens of this recipe
+     */
     public Recipe(Set<String> ingredients, Set<String> allergens) {
         this.ingredients = ingredients;
         this.allergens = allergens;
     }
 
+    /**
+     * @return The set containing the ingredients
+     */
     public Set<String> getIngredients() {
         return ingredients;
     }
 
+    /**
+     * @return The set containing the allergens
+     */
     public Set<String> getAllergens() {
         return allergens;
     }
