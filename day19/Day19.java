@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 public class Day19 {
     public static Rule[] parseRules(String[] lines) {
+        // welp, i don't know regex so...
         Map<Integer,Rule> rules = new HashMap<>();
         // create an empty body for all rules, since the rule class is
         // defined recursively
@@ -81,7 +82,6 @@ public class Day19 {
         for (int i = p; i < lines.length; i++) {
             msgs.add(lines[i].trim());
         }
-
         return msgs.toArray(String[]::new);
     }
 
