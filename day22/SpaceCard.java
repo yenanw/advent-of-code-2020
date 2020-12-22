@@ -38,7 +38,7 @@ public class SpaceCard {
         int round = 1;
         Player winner = null;
         while (winner == null) {
-            System.out.println("-- Round " + round++ + " --");
+            System.out.println("-- Round " + round + " --");
             System.out.println(player1);
             System.out.println(player2);
 
@@ -67,6 +67,8 @@ public class SpaceCard {
                 winner = player2;
             else if (!player2.hasCardLeft())
                 winner = player1;
+
+            round++;
         }
         System.out.println(winner.getName() + " wins the game!");
         System.out.println();
