@@ -20,7 +20,6 @@ public class Day22 {
             }
         }
         players[1] = new Player(name, hand);
-
         return players;
     }
 
@@ -34,7 +33,7 @@ public class Day22 {
             SpaceCard sc = new SpaceCard(p1[0], p1[1]);
             //----------------PART 1----------------
             System.out.println("The winner of Combat has a score of " +
-                               sc.score(sc.playCombat()));
+                               sc.score(sc.playCombat()) + "\n\n");
 
             //----------------PART 2----------------
             Player[] p2 = parsePlayers(lines);
