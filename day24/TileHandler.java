@@ -137,8 +137,9 @@ public class TileHandler {
         neighbors.put("e", floor[r][c+1]);
         neighbors.put("w", floor[r][c-1]);
 
+        // the odd numbered row is shifted 1 step to the right to pretend that
+        // it's a hexagon
         if ((r & 1) == 0) {
-            // when the row is even the
             neighbors.put("ne", floor[r-1][c]);
             neighbors.put("se", floor[r+1][c]);
             neighbors.put("nw", floor[r-1][c-1]);
