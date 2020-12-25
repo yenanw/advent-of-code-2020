@@ -2,7 +2,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Day25 {
-
     public static void main(String[] args) {
         try {
             String fileName = args[0];
